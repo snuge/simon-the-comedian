@@ -26,29 +26,31 @@ var jokes = [
   "Why did the feminist fail algebra? She couldn’t solve inequalities.",
 ];
 
-var randomSentence = ""; // Added this variable to store the current random joke
+var randomSentence = "";
 
 function joker() {
   var randomIndex = Math.floor(Math.random() * jokes.length);
   randomSentence = jokes[randomIndex];
-  var randomTextElement = document.getElementById("randomText");
-randomTextElement.textContent ="- "+ randomSentence;
+  $("#randomText").text("- " + randomSentence);
 }
 
-
-
-
-
-
-$(document).keypress(function () {
+function startGame() {
   if (!started) {
-    $("#level-title").html("Level " + level +'<span id="joke-text"></span>');
+    $("#level-title").html("Level " + level + '<span id="joke-text"></span>');
+    nextSequence();
+    started = true;
+  }
+}
+
+$(document).on("keypress touchstart", function (event) {
+  if (!started) {
+    $("#level-title").html("Level " + level + '<span id="joke-text"></span>');
     nextSequence();
     started = true;
   }
 });
 
-$(".btn").click(function () {
+$(".btn").on("click touchstart", function () {
   var userChosenColour = $(this).attr("id");
   userClickedPattern.push(userChosenColour);
   playSound(userChosenColour);
@@ -64,7 +66,6 @@ function checkAnswer(currentLevel) {
       }, 2000);
     }
   } else {
-   // Handles a wrong answer
     playSound("wrong");
     $("body").addClass("game-over");
     $("#level-title").text("Damn Bro, You dumb as hell!");
@@ -75,17 +76,22 @@ function checkAnswer(currentLevel) {
   }
 }
 
-
 function nextSequence() {
   userClickedPattern = [];
   level++;
-  joker(); // Call the joker function to get a new random joke
-  $("#level-title").text("Level " + level );
+  joker();
+  $("#level-title").text("Level " + level);
 
   var randomNumber = Math.floor(Math.random() * 4);
   var randomChosenColour = buttonColours[randomNumber];
   gamePattern.push(randomChosenColour);
-  $("#" + randomChosenColour).fadeIn(100).fadeOut(100).fadeIn(100).fadeIn(100).fadeOut(100).fadeIn(100)
+  $("#" + randomChosenColour)
+    .fadeIn(100)
+    .fadeOut(100)
+    .fadeIn(100)
+    .fadeIn(100)
+    .fadeOut(100)
+    .fadeIn(100);
   playSound(randomChosenColour);
 }
 
@@ -97,7 +103,7 @@ function animatePress(currentColor) {
 }
 
 function playSound(name) {
-  var audio = new Audio(name+".mp3");
+  var audio = new Audio("sounds/" + name + ".mp3");
   audio.play();
 }
 
@@ -106,3 +112,8 @@ function startOver() {
   gamePattern = [];
   started = false;
 }
+
+// Initialize the game
+$(document).ready(function () {
+  startGame();
+});
